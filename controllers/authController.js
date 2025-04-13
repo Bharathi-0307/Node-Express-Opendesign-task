@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
+const bcrypt = require('bcrypt');
 const { JWT_SECRET } = process.env;
 
 const registerUser = async (req, res) => {
@@ -13,16 +14,17 @@ const registerUser = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Explicitly pass a valid role, e.g. 'user' or 'admin'
     const newUser = await User.create({
       email,
       password_hash: hashedPassword,
       name,
-      mobile
+      mobile,
+      role: 'user', // Set a default role here, make sure it's valid
     });
 
-    const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
 
-    // Insert customer data using Knex
     const [customer] = await db('customers')
       .insert({
         user_id: newUser.id,
@@ -31,7 +33,7 @@ const registerUser = async (req, res) => {
         parent_name: parentName,
         plan,
         price,
-        students: JSON.stringify(students), // optional: use JSONB type in DB
+        students: JSON.stringify(students),
       })
       .returning('*');
 
@@ -46,6 +48,9 @@ const registerUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
+
 
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
