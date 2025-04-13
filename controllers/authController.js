@@ -4,11 +4,21 @@ const { JWT_SECRET } = process.env;
 
 exports.register = async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const existingUser = await User.findByEmail(req.body.email);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    const user = await User.create({
+      email: req.body.email,
+      password_hash: await bcrypt.hash(req.body.password, 10),
+      role: 'customer'
+    });
+
     const token = jwt.sign({ id: user.id }, JWT_SECRET);
     res.status(201).json({ user, token });
-  } catch (err) {
-    res.status(400).json({ error: err.message });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 

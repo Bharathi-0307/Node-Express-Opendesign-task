@@ -16,3 +16,35 @@ module.exports = {
     }
   }
 };
+
+
+
+// INFOS about the DB
+// initdb -D ..\data -U postgres -W
+
+// Run the server
+// pg_ctl -D ..\data -l ..\logfile.log start
+
+// pg_isready
+
+// Access the SQL shell:
+// psql -U postgres -d postgres
+
+// CREATE DATABASE ecommerce_db;
+
+
+
+// npm install pg
+
+// pg_ctl -D ..\data stop   # Stop server
+// pg_ctl -D ..\data start  # Start again
+
+// insert data dummy for testing
+// npx knex seed:run
+
+
+
+
+// NEW MIGRATE 
+
+// npx knex migrate:latest
