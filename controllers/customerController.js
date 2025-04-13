@@ -1,4 +1,4 @@
-const pool = require('../config/db.js'); 
+const pool = require('../config/db'); 
 
 exports.createCustomer = async (req, res) => {
   const { name, mobile, parent_name, location } = req.body;

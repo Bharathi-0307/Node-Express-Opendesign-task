@@ -22,37 +22,27 @@ const registerUser = async (req, res) => {
 
     const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
 
-    const customerData = {
-      user_id: newUser.id,
-      name,
-      mobile,
-      parent_name: parentName,
-      plan,
-      price,
-      students: JSON.stringify(students), 
-    };
-
-    const customerResult = await pool.query(
-      'INSERT INTO customers (user_id, name, mobile, parent_name, plan, price, students) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
-      [
-        customerData.user_id,
-        customerData.name,
-        customerData.mobile,
-        customerData.parent_name,
-        customerData.plan,
-        customerData.price,
-        customerData.students
-      ]
-    )
-    .returning('*');
+    // Insert customer data using Knex
+    const [customer] = await db('customers')
+      .insert({
+        user_id: newUser.id,
+        name,
+        mobile,
+        parent_name: parentName,
+        plan,
+        price,
+        students: JSON.stringify(students), // optional: use JSONB type in DB
+      })
+      .returning('*');
 
     res.status(201).json({
       user: newUser,
       token,
-      customer: customerResult.rows[0] 
+      customer,
     });
 
   } catch (error) {
+    console.error('Register Error:', error);
     res.status(500).json({ error: error.message });
   }
 };
