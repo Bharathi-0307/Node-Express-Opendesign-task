@@ -43,7 +43,8 @@ const registerUser = async (req, res) => {
         customerData.price,
         customerData.students
       ]
-    );
+    )
+    .returning('*');
 
     res.status(201).json({
       user: newUser,

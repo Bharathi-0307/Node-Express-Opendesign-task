@@ -3,6 +3,7 @@ const router = express.Router();
 const customerController = require('../controllers/customerController');
 const authenticate = require('../middleware/authMiddlewre');
 const { validateCustomer } = require('../validations/authValidation');
+const authController = require('../controllers/authController'); 
 
 router.post('/register', authController.registerUser);
 router.post('/', authenticate, validateCustomer, customerController.createCustomer);
