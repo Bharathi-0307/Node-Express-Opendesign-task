@@ -4,31 +4,34 @@ const bcrypt = require('bcrypt');
 const { JWT_SECRET } = process.env;
 
 const db = require('../config/db');
-
 const registerUser = async (req, res) => {
   const { email, password, name, mobile, parentName, plan, price, students } = req.body;
 
   try {
-    const existingUser = await User.findByEmail(email);
+    // Check if user already exists
+    const existingUser = await db('users').where({ email }).first();
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);  // Ensure the password is hashed
 
-    // Explicitly pass a valid role, e.g. 'user' or 'admin'
-    const newUser = await User.create({
-      email,
-      password_hash: hashedPassword,
-      name,
-      mobile,
-      role: 'user', 
-      parent_name: parentName, 
-    });
+    // Insert user (only user fields including the hashed password)
+    const [newUser] = await db('users')
+      .insert({
+        email,
+        password_hash: hashedPassword,  // Insert the hashed password
+        name,
+        role: 'user',  // or your default role
+      })
+      .returning('*');
 
-    const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
+    // JWT Token
+    const token = jwt.sign({ id: newUser.id }, JWT_SECRET, { expiresIn: '1h' });
 
-    const [customer] = await db('users')
+    // Insert into customers table
+    const [customer] = await db('customers')
       .insert({
         user_id: newUser.id,
         name,
@@ -40,6 +43,7 @@ const registerUser = async (req, res) => {
       })
       .returning('*');
 
+    // Response
     res.status(201).json({
       user: newUser,
       token,
@@ -51,10 +55,6 @@ const registerUser = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
-
-
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 

@@ -1,7 +1,7 @@
 const pool = require('../config/db'); 
 
 exports.createCustomer = async (req, res) => {
-  const { name, mobile, parent_name, location } = req.body;
+  const { name, mobile, parent_name,plan,price, location } = req.body;
   const user_id = req.user.userId;
 
   try {
@@ -11,6 +11,8 @@ exports.createCustomer = async (req, res) => {
         name,
         mobile,
         parent_name,
+        plan,
+        price,
         location
       })
       .returning('*'); 

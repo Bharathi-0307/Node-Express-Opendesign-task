@@ -10,11 +10,10 @@ exports.up = async function(knex) {
     table.timestamp('updated_at').defaultTo(knex.fn.now()); 
     table.string('mobile');  
     table.string('parent_name'); 
+    
 
   });
  
-  
-
   // Create the 'customers' table
   exports.up = function(knex) {
     return knex.schema.hasTable('customers').then(function(exists) {
@@ -37,7 +36,6 @@ exports.up = async function(knex) {
 };
 
 exports.down = async function(knex) {
-  // Drop the 'customers' table first as it has a foreign key dependency on 'users'
   await knex.schema.dropTableIfExists('customers');
   await knex.schema.dropTableIfExists('users');
 };
