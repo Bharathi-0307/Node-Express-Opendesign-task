@@ -2,21 +2,55 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const { JWT_SECRET } = process.env;
 
-exports.register = async (req, res) => {
+const registerUser = async (req, res) => {
+  const { email, password, name, mobile, parentName, plan, price, students } = req.body;
+
   try {
-    const existingUser = await User.findByEmail(req.body.email);
+    const existingUser = await User.findByEmail(email);
     if (existingUser) {
       return res.status(400).json({ error: 'Email already exists' });
     }
 
-    const user = await User.create({
-      email: req.body.email,
-      password_hash: await bcrypt.hash(req.body.password, 10),
-      role: 'customer'
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      email,
+      password_hash: hashedPassword,
+      name,
+      mobile
     });
 
-    const token = jwt.sign({ id: user.id }, JWT_SECRET);
-    res.status(201).json({ user, token });
+    const token = jwt.sign({ id: newUser.id }, JWT_SECRET);
+
+    const customerData = {
+      user_id: newUser.id,
+      name,
+      mobile,
+      parent_name: parentName,
+      plan,
+      price,
+      students: JSON.stringify(students), 
+    };
+
+    const customerResult = await pool.query(
+      'INSERT INTO customers (user_id, name, mobile, parent_name, plan, price, students) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+      [
+        customerData.user_id,
+        customerData.name,
+        customerData.mobile,
+        customerData.parent_name,
+        customerData.plan,
+        customerData.price,
+        customerData.students
+      ]
+    );
+
+    res.status(201).json({
+      user: newUser,
+      token,
+      customer: customerResult.rows[0] 
+    });
+
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
