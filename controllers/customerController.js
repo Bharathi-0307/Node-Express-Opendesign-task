@@ -1,5 +1,6 @@
-const pool = require('../config/db'); 
+const db = require('../config/db');
 
+const bcrypt = require('bcrypt');
 exports.createCustomer = async (req, res) => {
   const { name, mobile, parent_name,plan,price, location } = req.body;
   const user_id = req.user.userId;
@@ -25,7 +26,7 @@ exports.createCustomer = async (req, res) => {
 
 exports.getAllCustomers = async (req, res) => {
   try {
-    const customers = await db('customers').where({ user_id: req.user.userId });
+    const customers = await db('customers').where({ user_id: req.user.id });
     res.json(customers);
   } catch (err) {
     res.status(500).json({ error: err.message });

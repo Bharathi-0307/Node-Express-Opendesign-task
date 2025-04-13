@@ -30,13 +30,3 @@ app.listen(PORT, () => {
 
 
 
-
-// END POINTS 
-
-// POST	/api/auth/register	Register a new user
-// POST	/api/auth/login	Login and get a JWT token
-// POST	/api/customers	Create a new customer
-// GET	/api/customers	Get all customers
-// GET	/api/customers/:id	Get a specific customer by ID
-// PUT	/api/customers/:id	Update a customer by ID
-// DELETE	/api/customers/:id	Delete a customer by ID
