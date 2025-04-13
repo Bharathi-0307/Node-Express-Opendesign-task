@@ -3,6 +3,8 @@ const User = require('../models/user');
 const bcrypt = require('bcrypt');
 const { JWT_SECRET } = process.env;
 
+const db = require('../config/db');
+
 const registerUser = async (req, res) => {
   const { email, password, name, mobile, parentName, plan, price, students } = req.body;
 
@@ -20,12 +22,13 @@ const registerUser = async (req, res) => {
       password_hash: hashedPassword,
       name,
       mobile,
-      role: 'user', // Set a default role here, make sure it's valid
+      role: 'user', 
+      parent_name: parentName, 
     });
 
     const token = jwt.sign({ id: newUser.id }, process.env.JWT_SECRET);
 
-    const [customer] = await db('customers')
+    const [customer] = await db('users')
       .insert({
         user_id: newUser.id,
         name,

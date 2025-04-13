@@ -7,23 +7,33 @@ exports.up = async function(knex) {
     table.string('password_hash').notNullable(); // Password hash field
     table.string('role').defaultTo('user').notNullable(); // Role with default value 'user'
     table.timestamp('created_at').defaultTo(knex.fn.now()); // Timestamp for creation
-    table.timestamp('updated_at').defaultTo(knex.fn.now()); // Timestamp for updates
+    table.timestamp('updated_at').defaultTo(knex.fn.now()); 
+    table.string('mobile');  
+    table.string('parent_name'); 
+
   });
+ 
+  
 
   // Create the 'customers' table
-  // await knex.schema.createTable('customers', (table) => {
-  //   table.increments('id').primary(); // Auto-incremented ID
-  //   table.integer('user_id').unsigned().notNullable(); // Foreign key to users table
-  //   table.foreign('user_id').references('users.id').onDelete('CASCADE'); // Foreign key constraint
-  //   table.string('name').notNullable(); // Customer name
-  //   table.string('mobile').notNullable(); // Customer mobile number
-  //   table.string('parent_name').notNullable(); // Parent name
-  //   table.string('plan').notNullable(); // Plan type
-  //   table.integer('price').notNullable(); // Price
-  //   table.json('students').notNullable(); // JSON column for storing student data
-  //   table.timestamp('created_at').defaultTo(knex.fn.now()); // Timestamp for creation
-  //   table.timestamp('updated_at').defaultTo(knex.fn.now()); // Timestamp for updates
-  // });
+  exports.up = function(knex) {
+    return knex.schema.hasTable('customers').then(function(exists) {
+      if (!exists) {
+        return knex.schema.createTable('customers', function(table) {
+          table.increments('id').primary();
+          table.integer('user_id').notNullable();
+          table.string('name').notNullable();
+          table.string('mobile').notNullable();
+          table.string('parent_name');
+          table.string('plan');
+          table.decimal('price');
+          table.jsonb('students');
+          table.text('location');
+          table.timestamps(true, true);
+        });
+      }
+    });
+  };
 };
 
 exports.down = async function(knex) {
