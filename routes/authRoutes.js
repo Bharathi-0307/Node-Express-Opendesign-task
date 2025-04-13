@@ -1,8 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const authController = require('../controllers/authController');
+const customerController = require('../controllers/customerController');
+const authenticate = require('../middleware/authMiddlewre');
+const { validateCustomer } = require('../validations/authValidation');
 
-router.post('/register', authController.register);
-router.post('/login', authController.login);
+router.post('/', authenticate, validateCustomer, customerController.createCustomer);
+router.get('/', authenticate, customerController.getAllCustomers);
+router.get('/:id', authenticate, customerController.getCustomerById);
+router.put('/:id', authenticate, validateCustomer, customerController.updateCustomer);
+router.delete('/:id', authenticate, customerController.deleteCustomer);
 
 module.exports = router;
