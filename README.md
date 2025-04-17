@@ -45,8 +45,16 @@ You need to create your PostgreSQL database manually before running the migratio
 
 # After runthis cmd :  ####################
 #  for  schema creation
+# Run Migrations and Seeds  Dummy data
 
 npx knex migrate:latest   
+
+
+# add dummy data just run this cmd 
+npx knex seed:run  
+
+
+
 
 
 
