@@ -15,15 +15,15 @@ const registerUser = async (req, res) => {
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);  // Ensure the password is hashed
+    const hashedPassword = await bcrypt.hash(password, 10);  
 
     // Insert user (only user fields including the hashed password)
     const [newUser] = await db('users')
       .insert({
         email,
-        password_hash: hashedPassword,  // Insert the hashed password
+        password_hash: hashedPassword,  
         name,
-        role: 'user',  // or your default role
+        role: 'user', 
       })
       .returning('*');
 

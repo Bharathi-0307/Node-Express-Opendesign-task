@@ -22,4 +22,4 @@ module.exports = router;
 // GET	/api/customers	Get all customers
 // GET	/api/customers/:id	Get a specific customer by ID
 // PUT	/api/customers/:id	Update a customer by ID
-// DELETE	/api/customers/:id	Delete a customer by ID
+// DELETE	/api/customers/:id	Delete a customer by ID         

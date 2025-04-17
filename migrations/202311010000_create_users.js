@@ -10,33 +10,27 @@ exports.up = async function(knex) {
     table.timestamp('updated_at').defaultTo(knex.fn.now()); 
     table.string('mobile');  
     table.string('parent_name'); 
-    
-
   });
- 
+
   // Create the 'customers' table
-  exports.up = function(knex) {
-    return knex.schema.hasTable('customers').then(function(exists) {
-      if (!exists) {
-        return knex.schema.createTable('customers', function(table) {
-          table.increments('id').primary();
-          table.integer('user_id').notNullable();
-          table.string('name').notNullable();
-          table.string('mobile').notNullable();
-          table.string('parent_name');
-          table.string('plan');
-          table.decimal('price');
-          table.jsonb('students');
-          table.text('location');
-          table.timestamps(true, true);
-        });
-      }
-    });
-  };
+  await knex.schema.createTable('customers', (table) => {
+    table.increments('id').primary(); // Auto-incremented ID
+    table.integer('user_id').unsigned().notNullable(); // Foreign key reference to users table
+    table.foreign('user_id').references('id').inTable('users').onDelete('CASCADE'); // Foreign key relationship
+    table.string('name').notNullable();
+    table.string('mobile').notNullable();
+    table.string('parent_name');
+    table.string('plan');
+    table.decimal('price');
+    table.jsonb('students');
+    table.text('location');
+    table.timestamps(true, true); // Created and updated timestamps
+  });
 };
 
 exports.down = async function(knex) {
+  // Drop the 'customers' table first because it depends on the 'users' table
   await knex.schema.dropTableIfExists('customers');
+  // Drop the 'users' table
   await knex.schema.dropTableIfExists('users');
 };
-
