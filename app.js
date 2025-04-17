@@ -4,6 +4,8 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/authRoutes');
 const customerRoutes = require('./routes/authRoutes');
+const productRoutes = require('./routes/productRoutes');
+
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/customers', customerRoutes);
+app.use('/api/products', productRoutes);
+
 
 
 // Error handling
